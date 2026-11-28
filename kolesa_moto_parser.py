@@ -41,8 +41,6 @@ CITIES = {
     "\u042d\u043a\u0438\u0431\u0430\u0441\u0442\u0443\u0437": "ekibastuz",
     "\u0420\u0438\u0434\u0434\u0435\u0440": "ridder",
     "\u0420\u0443\u0434\u043d\u044b\u0439": "rudnyi",
-    "\u0420\u0438\u0434\u0434\u0435\u0440": "ridder",
-    "\u0420\u0443\u0434\u043d\u044b\u0439": "rudnyi",
 }
 
 
@@ -140,7 +138,7 @@ class KolesaSession(requests.Session):
             response = super().request(*args, **kwargs)
             server_wait = retry_after_seconds(response)
             if (
-                response.status_code in (403, 429, 468)
+                response.status_code in (403, 418, 429, 468)
                 or response.status_code >= 500
                 or "/.safeline/" in response.text.lower()
                 or server_wait > 0
@@ -219,7 +217,7 @@ def fetch_html(
         except requests.RequestException as e:
             last_err = e
         else:
-            blocked = r.status_code in (403, 429, 468) or "/.safeline/" in r.text.lower()
+            blocked = r.status_code in (403, 418, 429, 468) or "/.safeline/" in r.text.lower()
             if blocked:
                 retry_after = retry_after_seconds(r)
                 if (
